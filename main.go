@@ -23,11 +23,15 @@ func main() {
 	app.UseCache = true
 
 	render.SetAppConfig(&app)
+	Repo := handlers.NewRepo(&app)
+	handlers.NewHandler(Repo)
 
-	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/home", handlers.Home)
-	http.HandleFunc("/about", handlers.About)
-	err = http.ListenAndServe(serverPort, nil)
+	srv := &http.Server{
+		Addr:    serverPort,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
 	if err != nil {
 		fmt.Println(err)
 	}
