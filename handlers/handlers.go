@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/mitdonga/go-web/config"
@@ -23,10 +24,15 @@ func NewHandler(r *Repository) {
 	Repo = r
 }
 
-func (_ *Repository) Home(w http.ResponseWriter, r *http.Request) {
+func (rp *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	remoteIp := r.RemoteAddr
+	rp.App.SessionManager.Put(r.Context(), "remote_ip", remoteIp)
 	render.RenderTemplate(w, "home.page.tmpl")
 }
 
-func (_ *Repository) About(w http.ResponseWriter, r *http.Request) {
+func (rp *Repository) About(w http.ResponseWriter, r *http.Request) {
+	remoteIp := rp.App.SessionManager.GetString(r.Context(), "remote_ip")
+	fmt.Println(remoteIp)
+
 	render.RenderTemplate(w, "about.page.tmpl")
 }
